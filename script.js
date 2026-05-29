@@ -1,7 +1,7 @@
-import { config } from "./config.js";
+require('dotenv').config()
 const machineId = "VENDO-01";
 
-const domain = config.DOMAIN
+const domain = process.env.DOMAIN
 
 console.log(domain);
 
