@@ -661,3 +661,111 @@ button:hover {
 .hidden {
     display: none !important;
 }
+
+/* === INVENTORY TABLE BASE === */
+#inventoryTable tr {
+    transition: all 0.2s ease;
+}
+
+/* === EDIT MODE ROW HIGHLIGHT === */
+.edit-mode-row {
+    background: rgba(99, 102, 241, 0.08);
+}
+
+/* === INPUT STYLING === */
+#inventoryTable input {
+    width: 70px;             
+    padding: 3px 5px;
+    font-size: 13px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    text-align: center;
+    background: #fff;
+}
+
+#inventoryTable input:focus {
+    border-color: #6366f1;
+    box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.2);
+}
+
+/* === EDIT BUTTON STATES === */
+#editInventoryBtn {
+    transition: 0.2s ease;
+}
+
+#editInventoryBtn.editing {
+    background: #f59e0b;
+    color: white;
+}
+
+/* === RESTOCK BUTTON IMPROVEMENT === */
+.restock-btn {
+    background: #22c55e;
+    color: white;
+    border: none;
+    padding: 6px 10px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.restock-btn:hover {
+    background: #16a34a;
+}
+
+#inventoryTable .edit-name {
+    width: 120px;
+}
+
+#inventoryTable {
+    table-layout: fixed;
+    width: 100%;
+}
+
+#inventoryTable th:nth-child(1),
+#inventoryTable td:nth-child(1) { width: 60px; }
+
+#inventoryTable th:nth-child(2),
+#inventoryTable td:nth-child(2) { width: 180px; }
+
+#inventoryTable th:nth-child(3),
+#inventoryTable td:nth-child(3) { width: 100px; }
+
+#inventoryTable th:nth-child(4),
+#inventoryTable td:nth-child(4) { width: 100px; }
+
+#inventoryTable th:nth-child(5),
+#inventoryTable td:nth-child(5) { width: 120px; }
+
+#inventoryTable th:nth-child(6),
+#inventoryTable td:nth-child(6) { width: 120px; }
+
+#inventoryTable th:nth-child(7),
+#inventoryTable td:nth-child(7) { width: 120px; }
+
+#inventoryTable td {
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+
+#inventoryTable input {
+    width: 100%;
+    max-width: 90px;
+    padding: 3px 6px;
+    font-size: 13px;
+
+    border: 1px solid #e5e7eb;
+    border-radius: 6px;
+
+    text-align: center;
+    background: #ffffff;
+
+    display: inline-block;
+    box-sizing: border-box;
+}
+
+#inventoryTable input:focus {
+    outline: none;
+    border-bottom: 2px solid #6366f1;
+}

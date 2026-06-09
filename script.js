@@ -648,13 +648,20 @@ document.getElementById("exportLogsBtn")?.addEventListener("click", exportLogsTo
 document.getElementById("clearLogsBtn")?.addEventListener("click", clearLogs);
 
 document.getElementById("editInventoryBtn")?.addEventListener("click", async () => {
+    const btn = document.getElementById("editInventoryBtn");
+
     if (!isEditMode) {
         isEditMode = true;
-        document.getElementById("editInventoryBtn").innerText = "Save Changes";
-        displayInventoryTable();
+        btn.innerText = "Save Changes";
+        btn.classList.add("editing");
     } else {
         await saveInventoryChanges();
+        isEditMode = false;
+        btn.innerText = "Edit Inventory";
+        btn.classList.remove("editing");
     }
+
+    displayInventoryTable();
 });
 
 connectWebSocket();
