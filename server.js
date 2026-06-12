@@ -486,21 +486,35 @@ app.post("/api/products/bulk-update", async (req, res) => {
         for (const item of updates) {
             const productId = item.product_id;
 
-            const stock = Number(item.stock_count) ?? 0;
-            const max = Number(item.max_capacity) ?? 0;
-            const price = Number(item.price) ?? 0;
+            // BLOCK EDITING OF DEACTIVATED PRODUCTS
+            const activeCheck = await client.query(
+                `SELECT is_active
+                 FROM products
+                 WHERE product_id = $1`,
+                [productId]
+            );
+
+            if (!activeCheck.rows[0]?.is_active) {
+                console.log(`Product ${productId} is deactivated. Skipping update.`);
+                continue;
+            }
+
+            const stock = Number(item.stock_count) || 0;
+            const max = Number(item.max_capacity) || 0;
+            const price = Number(item.price) || 0;
             const name = item.product_name ?? null;
 
-            // update inventory
+            // Update inventory
             await client.query(
                 `UPDATE inventory
                  SET stock_count = $1,
-                     max_capacity = $2
+                     max_capacity = $2,
+                     updated_at = CURRENT_TIMESTAMP
                  WHERE product_id = $3`,
                 [stock, max, productId]
             );
 
-            // update product info ONLY if provided
+            // Update product info
             await client.query(
                 `UPDATE products
                  SET product_name = COALESCE($1, product_name),
@@ -512,16 +526,21 @@ app.post("/api/products/bulk-update", async (req, res) => {
 
         await client.query("COMMIT");
 
-        // refresh frontend
         broadcast({
             type: "productInventory",
             payload: await getProductInventory()
+        });
+
+        broadcast({
+            type: "summary",
+            payload: await getSummary()
         });
 
         res.json({ success: true });
 
     } catch (err) {
         await client.query("ROLLBACK");
+
         console.error("BULK UPDATE ERROR:", err);
 
         res.status(500).json({
