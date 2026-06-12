@@ -234,21 +234,21 @@ function displayInventoryTable() {
             ? "Inactive"
             : getProductStatus(stock);
 
-        const nameField = isEditMode
+        const nameField = isEditMode && product.is_active !== false
             ? `<input type="text" class="edit-name" data-id="${productId}" value="${productName}" />`
-            : productName;
+            : productName + (product.is_active === false ? ' 🔒' : '');
 
-        const priceField = isEditMode
+        const priceField = isEditMode && product.is_active !== false
             ? `<input type="number" class="edit-price" data-id="${productId}" value="${price}" />`
-            : formatPeso(price);
+            : formatPeso(price) + (product.is_active === false ? ' 🔒' : '');
 
-        const stockField = isEditMode
+        const stockField = isEditMode && product.is_active !== false
             ? `<input type="number" class="edit-stock" data-id="${productId}" value="${stock}" />`
-            : stock;
+            : stock + (product.is_active === false ? ' 🔒' : '');
 
-        const maxField = isEditMode
+        const maxField = isEditMode && product.is_active !== false
             ? `<input type="number" class="edit-max" data-id="${productId}" value="${maxCapacity}" />`
-            : maxCapacity;
+            : maxCapacity + (product.is_active === false ? ' 🔒' : '');
 
         table.innerHTML += `
             <tr>
