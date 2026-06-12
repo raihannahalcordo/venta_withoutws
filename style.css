@@ -713,7 +713,7 @@ button:hover {
     background: #16a34a;
 }
 
-.delete-btn {
+.deactivate-btn {
     background: #ef4444;
     color: white;
     border: none;
@@ -723,7 +723,7 @@ button:hover {
     transition: 0.2s;
 }
 
-.delete-btn:hover {
+.deactivate-btn:hover {
     background: #dc2626;
 }
 
@@ -902,4 +902,23 @@ button:hover {
     width: 16px;
     height: 16px;
     cursor: pointer;
+}
+
+.reactivate-btn {
+    background: #2f80ed;
+    color: white;
+    border: none;
+    padding: 6px 10px;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+.reactivate-btn:hover {
+    background: #1f6fd1;
+}
+
+td .restock-btn,
+td .deactivate-btn,
+td .reactivate-btn {
+    margin-right: 5px;
 }

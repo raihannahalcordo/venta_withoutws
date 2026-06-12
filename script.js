@@ -111,6 +111,12 @@ function getStatusClass(status) {
     const value = String(status || "").toLowerCase();
 
     if (
+        value === "inactive"
+    ) {
+        return "danger";
+    }
+
+    if (
         value === "available" ||
         value === "success" ||
         value === "resolved" ||
@@ -224,7 +230,9 @@ function displayInventoryTable() {
         const price = Number(product.price) || 0;
         const stock = Number(product.stock_count) || 0;
         const maxCapacity = Number(product.max_capacity) || 0;
-        const status = getProductStatus(stock);
+        const status = product.is_active === false
+            ? "Inactive"
+            : getProductStatus(stock);
 
         const nameField = isEditMode
             ? `<input type="text" class="edit-name" data-id="${productId}" value="${productName}" />`
@@ -255,17 +263,23 @@ function displayInventoryTable() {
                     </span>
                 </td>
                 <td>
-                    <div class="action-buttons">
+                    ${
+                        product.is_active === false
+                        ? `
+                            <button class="reactivate-btn" data-id="${productId}">
+                                Reactivate
+                            </button>
+                        `
+                        : `
+                            <button class="restock-btn" data-id="${productId}">
+                                Restock
+                            </button>
 
-                        <button class="restock-btn" data-id="${productId}">
-                            Restock
-                        </button>
-
-                        <button class="delete-btn" data-id="${productId}">
-                            Deactivate
-                        </button>
-
-                    </div>
+                            <button class="deactivate-btn" data-id="${productId}">
+                                Deactivate
+                            </button>
+                        `
+                    }
                 </td>
             </tr>
         `;
