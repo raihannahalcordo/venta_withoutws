@@ -593,8 +593,36 @@ navLinks.forEach(link => {
 const clearBtn = document.getElementById("clearBtn");
 
 if (clearBtn) {
-    clearBtn.addEventListener("click", function() {
-        alert("Clear should be handled through the database, not only the frontend.");
+    clearBtn.addEventListener("click", async () => {
+
+        const confirmed = confirm(
+            "Are you sure you want to clear all transactions?"
+        );
+
+        if (!confirmed) return;
+
+        try {
+            const response = await fetch(
+                `${API_BASE_URL}/api/transactions/clear`,
+                {
+                    method: "DELETE"
+                }
+            );
+
+            const data = await response.json();
+
+            if (!data.success) {
+                throw new Error();
+            }
+
+            alert("Transactions cleared successfully.");
+
+            await loadDashboardData();
+
+        } catch (err) {
+            console.error(err);
+            alert("Failed to clear transactions.");
+        }
     });
 }
 

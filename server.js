@@ -278,6 +278,33 @@ app.delete("/api/products/:id", async (req, res) => {
     }
 });
 
+app.delete("/api/transactions/clear", async (req, res) => {
+    const client = await db.connect();
+
+    try {
+
+        await client.query(`
+            DELETE FROM transactions
+        `);
+
+        res.json({
+            success: true
+        });
+
+    } catch (err) {
+
+        console.error(err);
+
+        res.status(500).json({
+            success: false,
+            message: "Failed to clear transactions"
+        });
+
+    } finally {
+        client.release();
+    }
+});
+
 app.post("/api/products/:id/reactivate", async (req, res) => {
     const client = await db.connect();
 
