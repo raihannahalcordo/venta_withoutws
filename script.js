@@ -517,41 +517,69 @@ function showConfirmModal({ title, message, warning, onConfirm }) {
     const titleEl = document.getElementById("successTitle");
     const msgEl = document.getElementById("successMessage");
     const okBtn = document.getElementById("successOkBtn");
+    const cancelBtn = document.getElementById("cancelModalBtn");
 
     titleEl.innerText = title;
 
     msgEl.innerHTML = `
         <p>${message}</p>
-        ${warning ? `<p style="margin-top:10px;color:#f87171;font-size:0.9rem;">
-            ${warning}
-        </p>` : ""}
+        ${warning ? `
+            <p style="margin-top:10px;color:#f87171;font-size:0.9rem;">
+                ${warning}
+            </p>
+        ` : ""}
     `;
 
-    // IMPORTANT: only show ONE button in confirm mode
+    // Show cancel button during confirmation
+    cancelBtn.style.display = "inline-block";
+
     okBtn.innerText = "Yes, Confirm";
     okBtn.style.display = "inline-block";
+    okBtn.style.background = "#ef4444";
+    okBtn.style.color = "#ffffff";
 
     confirmCallback = onConfirm;
 
     modal.classList.remove("hidden");
+
+    const icon = document.querySelector("#successModal i");
+
+    icon.style.display = "none";
+
+    const actions = document.querySelector("#successModal .modal-actions");
+
+    actions.style.justifyContent = "space-between";
+
+    cancelBtn.style.display = "inline-block";
 }
 
 function showSuccessModal(message = "Success", title = "Success") {
+
     const modal = document.getElementById("successModal");
-    const titleEl = document.getElementById("successTitle");
-    const msgEl = document.getElementById("successMessage");
+
+    document.getElementById("successTitle").innerText = title;
+    document.getElementById("successMessage").innerText = message;
+
+    document.getElementById("cancelModalBtn").style.display = "none";
+
     const okBtn = document.getElementById("successOkBtn");
+    okBtn.innerText = "OK";
 
-    titleEl.innerText = title;
-    msgEl.innerText = message;
+    // Restore green button
+    okBtn.style.background = "#22c55e";
+    okBtn.style.color = "#ffffff";
 
-    // IMPORTANT RESET
     confirmCallback = null;
 
-    okBtn.innerText = "OK";
-    okBtn.style.display = "inline-block";
-
     modal.classList.remove("hidden");
+
+    const icon = document.querySelector("#successModal i");
+
+    icon.style.display = "block";
+
+    const actions = document.querySelector("#successModal .modal-actions");
+
+    actions.style.justifyContent = "center";
 }
 
 function showErrorModal(message = "Something went wrong", title = "Error") {
@@ -780,7 +808,6 @@ if (confirmBtn) {
 
 document.addEventListener("click", async (e) => {
 
-    // RESTOCK
     const restockBtn = e.target.closest(".restock-btn");
     if (restockBtn) {
         const productId = restockBtn.dataset.id;
@@ -788,7 +815,6 @@ document.addEventListener("click", async (e) => {
         return;
     }
 
-    // DEACTIVATE
     const deactivateBtn = e.target.closest(".deactivate-btn");
     if (deactivateBtn) {
         const productId = deactivateBtn.dataset.id;
@@ -844,7 +870,6 @@ document.addEventListener("click", async (e) => {
             console.error(err);
             alert("Failed to reactivate product.");
         }
-
         return;
     }
 });
