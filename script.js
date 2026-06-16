@@ -565,7 +565,6 @@ function showSuccessModal(message = "Success", title = "Success") {
     const okBtn = document.getElementById("successOkBtn");
     okBtn.innerText = "OK";
 
-    // Restore green button
     okBtn.style.background = "#22c55e";
     okBtn.style.color = "#ffffff";
 
