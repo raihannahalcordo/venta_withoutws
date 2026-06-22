@@ -836,38 +836,41 @@ document.addEventListener("click", async (e) => {
     if (deactivateBtn) {
         const productId = deactivateBtn.dataset.id;
 
-        const confirmDeactivate = confirm(
-            "Are you sure you want to deactivate this product?"
-        );
+        showConfirmModal({
+            title: "Deactivate Product",
+            message: "Are you sure you want to deactivate this product?",
+            warning: "This product will be removed from active listings.",
+            onConfirm: async () => {
+                try {
+                    const res = await fetch(
+                        `${API_BASE_URL}/api/products/${productId}`,
+                        {
+                            method: "DELETE"
+                        }
+                    );
 
-        if (!confirmDeactivate) return;
+                    const data = await res.json();
+                    if (!data.success) throw new Error();
 
-        try {
-            const res = await fetch(
-                `${API_BASE_URL}/api/products/${productId}`,
-                {
-                    method: "DELETE"
+                    showSuccessModal(
+                        "Product deactivated successfully",
+                        "Deactivated"
+                    );
+
+                    await loadDashboardData();
+
+                } catch (err) {
+                    console.error(err);
+                    showErrorModal(
+                        "Unable to deactivate the product. Please try again.",
+                        "Action Failed"
+                    );
                 }
-            );
-
-            const data = await res.json();
-            if (!data.success) throw new Error();
-
-            showSuccessModal(
-                "Product deactivated successfully",
-                "Deactivated"
-            );
-
-            await loadDashboardData();
-
-        } catch (err) {
-            console.error(err);
-            showErrorModal("Unable to deactivate the product. Please try again.", "Action Failed");
-        }
+            }
+        });
 
         return;
     }
-
     const reactivateBtn = e.target.closest(".reactivate-btn");
     if (reactivateBtn) {
         const productId = reactivateBtn.dataset.id;
