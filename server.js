@@ -20,14 +20,14 @@ try {
 const express = require("express");
 const cors = require("cors");
 const { Pool } = require("pg");
-const http = require("http");
-const WebSocket = require("ws");
+//const http = require("http");
+//const WebSocket = require("ws");
 
 require("dotenv").config();
 
 const app = express();
-const server = http.createServer(app);
-const wss = new WebSocket.Server({ server }); 
+//const server = http.createServer(app);
+//const wss = new WebSocket.Server({ server }); 
 
 app.use(cors());
 app.use(express.json());
@@ -43,13 +43,13 @@ const db = new Pool({
 // =========================
 // WEBSOCKET BROADCAST
 // =========================
-function broadcast(data) {
-  wss.clients.forEach((client) => {
-    if (client.readyState === WebSocket.OPEN) {
-      client.send(JSON.stringify(data));
-    }
-  });
-}
+//function broadcast(data) {
+//  wss.clients.forEach((client) => {
+//    if (client.readyState === WebSocket.OPEN) {
+//      client.send(JSON.stringify(data));
+//    }
+//  });
+//}
 
 app.post("/api/coin-inventory/reset", async (req, res) => {
     const client = await db.connect();
@@ -76,10 +76,10 @@ app.post("/api/coin-inventory/reset", async (req, res) => {
 
         await client.query("COMMIT");
 
-        broadcast({
-            type: "coinInventory",
-            payload: result.rows[0]
-        });
+        //broadcast({
+        //    type: "coinInventory",
+        //    payload: result.rows[0]
+        //});
 
         res.json({
             success: true,
@@ -238,22 +238,22 @@ const lastCoin =
 // =========================
 // WEBSOCKET CONNECTION
 // =========================
-wss.on("connection", async (ws) => {
-  console.log("Client connected");
+//wss.on("connection", async (ws) => {
+//  console.log("Client connected");
 
-  try {
-    ws.send(JSON.stringify({ type: "summary", payload: await getSummary() }));
-    ws.send(JSON.stringify({ type: "productInventory", payload: await getProductInventory() }));
-    ws.send(JSON.stringify({ type: "coinInventory", payload: await getCoinInventory() }));
-    ws.send(JSON.stringify({ type: "transactions", payload: await getTransactions() }));
+//  try {
+//    ws.send(JSON.stringify({ type: "summary", payload: await getSummary() }));
+//    ws.send(JSON.stringify({ type: "productInventory", payload: await getProductInventory() }));
+//    ws.send(JSON.stringify({ type: "coinInventory", payload: await getCoinInventory() }));
+//    ws.send(JSON.stringify({ type: "transactions", payload: await getTransactions() }));
 
-    ws.send(JSON.stringify({ type: "machineLogs", payload: await getMachineLogs() }));
-  } catch (err) {
-    console.error("WS init error:", err);
-  }
+//    ws.send(JSON.stringify({ type: "machineLogs", payload: await getMachineLogs() }));
+//  } catch (err) {
+//    console.error("WS init error:", err);
+//  }
 
-  ws.on("close", () => console.log("Client disconnected"));
-});
+//  ws.on("close", () => console.log("Client disconnected"));
+//});
 
 // =========================
 // ROUTES
@@ -297,20 +297,20 @@ app.delete("/api/products/:id", async (req, res) => {
             `Product ID ${productId} was removed (soft delete)`
         ]);
 
-        broadcast({
-            type: "productInventory",
-            payload: await getProductInventory()
-        });
+        //broadcast({
+        //    type: "productInventory",
+        //    payload: await getProductInventory()
+        //});
 
-        broadcast({
-            type: "machineLogs",
-            payload: await getMachineLogs()
-        });
+        //broadcast({
+        //    type: "machineLogs",
+        //    payload: await getMachineLogs()
+        //});
 
-        broadcast({
-            type: "summary",
-            payload: await getSummary()
-        });
+        //broadcast({
+        //    type: "summary",
+        //    payload: await getSummary()
+        //});
 
         res.json({ success: true });
 
@@ -332,10 +332,10 @@ app.delete("/api/transactions/clear", async (req, res) => {
             RESTART IDENTITY
         `);
 
-        broadcast({
-            type: "transactions",
-            payload: await getTransactions()
-        });
+        //broadcast({
+        //    type: "transactions",
+        //    payload: await getTransactions()
+        //});
 
         res.json({
             success: true
@@ -365,10 +365,10 @@ app.delete("/api/machine-logs/clear", async (req, res) => {
             RESTART IDENTITY
         `);
 
-        broadcast({
-            type: "machineLogs",
-            payload: await getMachineLogs()
-        });
+        //broadcast({
+        //    type: "machineLogs",
+        //    payload: await getMachineLogs()
+        //});
 
         res.json({
             success: true
@@ -387,50 +387,50 @@ app.delete("/api/machine-logs/clear", async (req, res) => {
     }
 });
 
-app.post("/api/products/:id/reactivate", async (req, res) => {
-    const client = await db.connect();
+//app.post("/api/products/:id/reactivate", async (req, res) => {
+//    const client = await db.connect();
 
-    try {
-        const productId = req.params.id;
+//    try {
+//        const productId = req.params.id;
 
-        await client.query(`
-            UPDATE products
-            SET is_active = TRUE
-            WHERE product_id = $1
-        `, [productId]);
+//        await client.query(`
+//            UPDATE products
+//            SET is_active = TRUE
+//            WHERE product_id = $1
+//        `, [productId]);
 
-        await client.query(`
-            INSERT INTO machine_logs (log_type, message)
-            VALUES ($1, $2)
-        `, [
-            "Reactivate",
-            `Product ID ${productId} was reactivated`
-        ]);
+//        await client.query(`
+//            INSERT INTO machine_logs (log_type, message)
+//            VALUES ($1, $2)
+//        `, [
+//            "Reactivate",
+//            `Product ID ${productId} was reactivated`
+//        ]);
 
-        broadcast({
-            type: "productInventory",
-            payload: await getProductInventory()
-        });
+        //broadcast({
+        //    type: "productInventory",
+        //    payload: await getProductInventory()
+        //});
 
-        broadcast({
-            type: "machineLogs",
-            payload: await getMachineLogs()
-        });
+        //broadcast({
+        //    type: "machineLogs",
+        //    payload: await getMachineLogs()
+        //});
 
-        broadcast({
-            type: "summary",
-            payload: await getSummary()
-        });
+        //broadcast({
+        //    type: "summary",
+        //    payload: await getSummary()
+        //});
 
-        res.json({ success: true });
+//        res.json({ success: true });
 
-    } catch (err) {
-        console.error(err);
-        res.status(500).json({ success: false });
-    } finally {
-        client.release();
-    }
-});
+//    } catch (err) {
+//        console.error(err);
+//        res.status(500).json({ success: false });
+//    } finally {
+//        client.release();
+//    }
+//});
 
 app.post("/api/products/:id/reactivate", async (req, res) => {
     const client = await db.connect();
@@ -458,20 +458,20 @@ app.post("/api/products/:id/reactivate", async (req, res) => {
             `Product ID ${productId} was reactivated`
         ]);
 
-        broadcast({
-            type: "productInventory",
-            payload: await getProductInventory()
-        });
+        //broadcast({
+        //    type: "productInventory",
+        //    payload: await getProductInventory()
+        //});
 
-        broadcast({
-            type: "machineLogs",
-            payload: await getMachineLogs()
-        });
+        //broadcast({
+        //    type: "machineLogs",
+        //    payload: await getMachineLogs()
+        //});
 
-        broadcast({
-            type: "summary",
-            payload: await getSummary()
-        });
+        //broadcast({
+        //    type: "summary",
+        //    payload: await getSummary()
+        //});
 
         res.json({ success: true });
 
@@ -545,25 +545,25 @@ app.post("/api/transaction", async (req, res) => {
     await client.query("COMMIT");
 
     // ⚡ ONLY LIGHTWEIGHT UPDATES
-    broadcast({
-      type: "summary",
-      payload: await getSummary()
-    });
+    //broadcast({
+    //  type: "summary",
+    //  payload: await getSummary()
+    //});
 
-    broadcast({
-      type: "productInventory",
-      payload: await getProductInventory()
-    });
+    //broadcast({
+    //  type: "productInventory",
+    //  payload: await getProductInventory()
+    //});
 
-    broadcast({
-      type: "machineLogs",
-      payload: await getMachineLogs()
-    });
+    //broadcast({
+    //  type: "machineLogs",
+    //  payload: await getMachineLogs()
+    //});
 
-    broadcast({
-      type: "transactions",
-      payload: await getTransactions()
-    });
+    //broadcast({
+    //  type: "transactions",
+    //  payload: await getTransactions()
+    //});
 
     res.json({
       success: true,
@@ -605,15 +605,15 @@ app.post("/api/coin-insert", async (req, res) => {
     ]);
 
     // ⚡ FAST BROADCAST ONLY
-    broadcast({
-      type: "coinInventory",
-      payload: await getCoinInventory()
-    });
+    //broadcast({
+    //  type: "coinInventory",
+    //  payload: await getCoinInventory()
+    //});
 
-    broadcast({
-      type: "machineLogs",
-      payload: await getMachineLogs()
-    });
+    //broadcast({
+    //  type: "machineLogs",
+    //  payload: await getMachineLogs()
+    //});
 
     res.json({ success: true });
 
@@ -650,20 +650,20 @@ app.post("/api/product-inventory/:productId/restock", async (req, res) => {
       `Product ID ${productId} restocked to max capacity`
     ]);
 
-    broadcast({
-      type: "productInventory",
-      payload: await getProductInventory()
-    });
+    //broadcast({
+    //  type: "productInventory",
+    //  payload: await getProductInventory()
+    //});
 
-    broadcast({
-      type: "summary",
-      payload: await getSummary()
-    });
+    //broadcast({
+    //  type: "summary",
+    //  payload: await getSummary()
+    //});
 
-    broadcast({
-      type: "newLog",
-      payload: logResult.rows[0]
-    });
+    //broadcast({
+    //  type: "newLog",
+    //  payload: logResult.rows[0]
+    //});
 
     res.json({ success: true, data: result.rows[0] });
 
@@ -731,15 +731,15 @@ app.post("/api/products/bulk-update", async (req, res) => {
 
         await client.query("COMMIT");
 
-        broadcast({
-            type: "productInventory",
-            payload: await getProductInventory()
-        });
+        ///broadcast({
+        //    type: "productInventory",
+        //    payload: await getProductInventory()
+        //});
 
-        broadcast({
-            type: "summary",
-            payload: await getSummary()
-        });
+        //broadcast({
+        //    type: "summary",
+        //    payload: await getSummary()
+        //});
 
         res.json({ success: true });
 
@@ -802,15 +802,15 @@ app.post("/api/products", async (req, res) => {
 
         await client.query("COMMIT");
 
-        broadcast({
-            type: "productInventory",
-            payload: await getProductInventory()
-        });
+        //broadcast({
+        //    type: "productInventory",
+        //    payload: await getProductInventory()
+        //});
 
-        broadcast({
-            type: "summary",
-            payload: await getSummary()
-        });
+        //broadcast({
+        //    type: "summary",
+        //    payload: await getSummary()
+        //});
 
         res.json({ success: true });
 
@@ -831,6 +831,10 @@ app.post("/api/products", async (req, res) => {
 
 const PORT = process.env.PORT || 3000;
 
-server.listen(PORT, "0.0.0.0", () => {
+//server.listen(PORT, "0.0.0.0", () => {
+//  console.log(`Server running on port ${PORT}`);
+//});
+
+app.listen(PORT, "0.0.0.0", () => {
   console.log(`Server running on port ${PORT}`);
-});
+});//NEW

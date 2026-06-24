@@ -1,5 +1,5 @@
 let API_BASE_URL = "http://localhost:3000";
-let WS_URL = "ws://localhost:3000";
+//let WS_URL = "ws://localhost:3000";
 
 let machineId = "VM-01";
 let showInactiveProducts = false;
@@ -30,35 +30,42 @@ let revenueChart = null;
 let isEditMode = false;
 
 let confirmCallback = null;
+let isLoadingDashboard = false;
 
 async function loadDashboardData() {
-    try {
-        const summaryResponse = await fetch(`${API_BASE_URL}/api/summary`);
-        summary = await summaryResponse.json();
+    if (isLoadingDashboard) return;
 
-        const productsResponse = await fetch(`${API_BASE_URL}/api/products`);
-        products = await productsResponse.json();
+    isLoadingDashboard = true;
+        try {
+            const summaryResponse = await fetch(`${API_BASE_URL}/api/summary`);
+            summary = await summaryResponse.json();
 
-        const coinResponse = await fetch(`${API_BASE_URL}/api/coin-inventory`);
-        coinInventory = await coinResponse.json();
+            const productsResponse = await fetch(`${API_BASE_URL}/api/products`);
+            products = await productsResponse.json();
 
-        const transactionResponse = await fetch(`${API_BASE_URL}/api/transactions?limit=13`);
-        transactions = await transactionResponse.json();
+            const coinResponse = await fetch(`${API_BASE_URL}/api/coin-inventory`);
+            coinInventory = await coinResponse.json();
 
-        const logsResponse = await fetch(`${API_BASE_URL}/api/machine-logs`);
-        machineLogs = await logsResponse.json();
+            const transactionResponse = await fetch(`${API_BASE_URL}/api/transactions?limit=13`);
+            transactions = await transactionResponse.json();
 
-        updateDashboard();
+            const logsResponse = await fetch(`${API_BASE_URL}/api/machine-logs`);
+            machineLogs = await logsResponse.json();
 
-    } catch (error) {
-        console.error("Failed to load dashboard data:", error);
+            updateDashboard();
 
-        summary.machineStatus = "Offline";
-        updateDashboard();
+        } catch (error) {
+            console.error("Failed to load dashboard data:", error);
+
+            summary.machineStatus = "Offline";
+            updateDashboard();
+        }
+    finally {
+    isLoadingDashboard = false;
     }
 }
 
-function connectWebSocket() {
+/*function connectWebSocket() {
     const socket = new WebSocket(WS_URL);
 
     socket.onopen = () => {
@@ -99,7 +106,7 @@ function connectWebSocket() {
     socket.onerror = (error) => {
         console.error("WebSocket error:", error);
     };
-}
+}*/
 
 function getProductStatus(stock) {
     const value = Number(stock) || 0;
@@ -772,7 +779,7 @@ if (saveSettingsBtn) {
 
         if (apiInput && apiInput.value.trim() !== "") {
             API_BASE_URL = apiInput.value.trim();
-            WS_URL = API_BASE_URL.replace("http://", "ws://").replace("https://", "wss://");
+            //WS_URL = API_BASE_URL.replace("http://", "ws://").replace("https://", "wss://");
         }
 
         showSuccessModal(
@@ -888,7 +895,10 @@ document.addEventListener("click", async (e) => {
             await loadDashboardData();
         } catch (err) {
             console.error(err);
-            showE("Failed to reactivate product.");
+            showErrorModal(
+                "Failed to reactivate product.",
+                "Reactivate Error"
+            );
         }
         return;
     }
@@ -994,6 +1004,10 @@ document.getElementById("showInactiveProducts")?.addEventListener("change", (e) 
     displayInventoryTable();
 });
 
-connectWebSocket();
+//connectWebSocket();
 loadChart();
 loadDashboardData();
+
+setInterval(() => {
+    loadDashboardData();
+}, 3000);//NEW
