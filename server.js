@@ -259,7 +259,7 @@ const lastCoin =
 // ROUTES
 // =========================
 app.get("/", (req, res) => {
-  res.send("VentaMachine backend is running");
+    res.sendFile(path.join(__dirname, "index.html"));
 });
 
 app.get("/api/summary", async (req, res) => {
