@@ -1,4 +1,4 @@
-const fs = require("fs");
+/*const fs = require("fs");
 
 console.log("STARTING VERSION A30DB69");
 
@@ -16,8 +16,10 @@ try {
 try {
   console.log("ws exists:", fs.existsSync("./node_modules/ws"));
 } catch (e) {}
+*/
 
 const express = require("express");
+const path = require("path");
 const cors = require("cors");
 const { Pool } = require("pg");
 //const http = require("http");
@@ -258,6 +260,8 @@ const lastCoin =
 // =========================
 // ROUTES
 // =========================
+app.use(express.static(__dirname));
+
 app.get("/", (req, res) => {
     res.sendFile(path.join(__dirname, "index.html"));
 });
