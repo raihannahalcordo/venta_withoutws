@@ -36,6 +36,9 @@ async function loadDashboardData() {
 
     isLoadingDashboard = true;
         try {
+            console.log("API_BASE_URL:", API_BASE_URL);
+            console.log("Products API:", `${API_BASE_URL}/api/products`);
+            console.log("Summary API:", `${API_BASE_URL}/api/summary`);
             const summaryResponse = await fetch(`${API_BASE_URL}/api/summary`);
             summary = await summaryResponse.json();
 
