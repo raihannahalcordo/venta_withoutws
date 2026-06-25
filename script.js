@@ -1,4 +1,4 @@
-let API_BASE_URL = "http://localhost:3000";
+let API_BASE_URL = "";
 
 let machineId = "VM-01";
 let showInactiveProducts = false;
