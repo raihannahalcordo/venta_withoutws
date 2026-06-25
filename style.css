@@ -79,7 +79,7 @@ body {
 
 .card {
     background: #ffffff;
-    padding: 22px;
+    padding: 12px;
     border-radius: 18px;
     box-shadow: 0 8px 18px rgba(0, 0, 0, 0.04);
 }
@@ -98,13 +98,13 @@ body {
 }
 
 .card-icon {
-    width: 68px;
-    height: 68px;
-    border-radius: 20px;
+    width: 54px;
+    height: 54px;
+    border-radius: 16px;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 30px;
+    font-size: 24px;
     flex-shrink: 0;
 }
 
@@ -129,14 +129,14 @@ body {
 }
 
 .stat-info p {
-    font-size: 14px;
+    font-size: 12px;
     color: #8a9a9f;
-    margin-bottom: 10px;
+    margin-bottom: 4px;
     font-weight: 500;
 }
 
 .stat-info h2 {
-    font-size: 30px;
+    font-size: 24px;
     color: #2a353b;
     line-height: 1.1;
 }
@@ -147,7 +147,7 @@ body {
     display: flex;
     align-items: center;
     gap: 8px;
-    margin-top: 18px;
+    margin-top: 0px;
 }
 
 .change.up {
@@ -188,6 +188,7 @@ body {
     border-radius: 18px;
     box-shadow: 0 8px 18px rgba(0, 0, 0, 0.04);
     margin-bottom: 25px;
+    max-height: calc(100vh - 35px);
     overflow: hidden;
 }
 
@@ -224,7 +225,7 @@ th {
 }
 
 td {
-    padding: 15px 16px 15px 0;
+    padding: 13px 16px 15px 0;
     border-top: 1px solid #eef1f2;
     font-size: 14px;
     color: #2a353b;
@@ -356,12 +357,12 @@ button:hover {
 .money-box {
     display: flex;
     align-items: center;
-    gap: 18px;
+    gap: 8px;
 }
 
 .money-divider {
     width: 1px;
-    height: 75px;
+    height: 60px;
     background: #eef1f2;
 }
 
@@ -795,7 +796,7 @@ button:hover {
     background: #ffffff;
     border: 1px solid #eef1f2;
     border-radius: 18px;
-    padding: 28px;
+    padding: 20px;
     box-shadow: 0 8px 18px rgba(0, 0, 0, 0.04);
     transition: 0.2s ease;
     display: flex;

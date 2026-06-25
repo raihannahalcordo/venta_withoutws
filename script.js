@@ -1,5 +1,4 @@
 let API_BASE_URL = "http://localhost:3000";
-//let WS_URL = "ws://localhost:3000";
 
 let machineId = "VM-01";
 let showInactiveProducts = false;
@@ -64,49 +63,6 @@ async function loadDashboardData() {
     isLoadingDashboard = false;
     }
 }
-
-/*function connectWebSocket() {
-    const socket = new WebSocket(WS_URL);
-
-    socket.onopen = () => {
-        console.log("WebSocket connected");
-    };
-
-    socket.onmessage = (event) => {
-        const data = JSON.parse(event.data);
-
-        if (data.type === "summary") {
-            summary = data.payload;
-        }
-
-        if (data.type === "productInventory") {
-            products = data.payload;
-        }
-
-        if (data.type === "coinInventory") {
-            coinInventory = data.payload;
-        }
-
-        if (data.type === "transactions") {
-            transactions = data.payload;
-        }
-
-        if (data.type === "machineLogs") {
-            machineLogs = data.payload;
-        }
-
-        updateDashboard();
-    };
-
-    socket.onclose = () => {
-        console.log("WebSocket disconnected. Reconnecting...");
-        setTimeout(connectWebSocket, 3000);
-    };
-
-    socket.onerror = (error) => {
-        console.error("WebSocket error:", error);
-    };
-}*/
 
 function getProductStatus(stock) {
     const value = Number(stock) || 0;
@@ -540,7 +496,6 @@ function showConfirmModal({ title, message, warning, onConfirm }) {
         ` : ""}
     `;
 
-    // Show cancel button during confirmation
     cancelBtn.style.display = "inline-block";
 
     okBtn.innerText = "Yes, Confirm";
@@ -597,11 +552,9 @@ function showErrorModal(message = "Something went wrong", title = "Error") {
     const icon = modal.querySelector("i");
     const okBtn = document.getElementById("errorOkBtn");
 
-    // text
     titleEl.innerText = title;
     msgEl.innerText = message;
 
-    // reset + set error styles
     icon.style.color = "#ef4444";
     titleEl.style.color = "#ef4444";
 
@@ -699,7 +652,6 @@ document.getElementById("errorOkBtn")?.addEventListener("click", () => {
     document.getElementById("errorModal").classList.add("hidden");
 });
 
-// CLEAR TRANSACTIONS
 document.getElementById("clearTransactionsBtn")?.addEventListener("click", () => {
 
     showConfirmModal({
@@ -728,8 +680,6 @@ document.getElementById("clearTransactionsBtn")?.addEventListener("click", () =>
 
 });
 
-
-// CLEAR MACHINE LOGS
 document.getElementById("clearLogsBtn")?.addEventListener("click", () => {
 
     showConfirmModal({
@@ -779,7 +729,6 @@ if (saveSettingsBtn) {
 
         if (apiInput && apiInput.value.trim() !== "") {
             API_BASE_URL = apiInput.value.trim();
-            //WS_URL = API_BASE_URL.replace("http://", "ws://").replace("https://", "wss://");
         }
 
         showSuccessModal(
@@ -1004,10 +953,9 @@ document.getElementById("showInactiveProducts")?.addEventListener("change", (e) 
     displayInventoryTable();
 });
 
-//connectWebSocket();
 loadChart();
 loadDashboardData();
 
 setInterval(() => {
     loadDashboardData();
-}, 3000);//NEW
+}, 3000);

@@ -1,35 +1,11 @@
-/*const fs = require("fs");
-
-console.log("STARTING VERSION A30DB69");
-
-try {
-  const modules = fs.readdirSync("./node_modules");
-  console.log("NODE_MODULE_COUNT:", modules.length);
-  console.log(
-    "FIRST_20_MODULES:",
-    modules.slice(0, 20).join(", ")
-  );
-} catch (e) {
-  console.error("CANNOT READ NODE_MODULES", e);
-}
-
-try {
-  console.log("ws exists:", fs.existsSync("./node_modules/ws"));
-} catch (e) {}
-*/
-
 const express = require("express");
 const path = require("path");
 const cors = require("cors");
 const { Pool } = require("pg");
-//const http = require("http");
-//const WebSocket = require("ws");
 
 require("dotenv").config();
 
 const app = express();
-//const server = http.createServer(app);
-//const wss = new WebSocket.Server({ server }); 
 
 app.use(cors());
 app.use(express.json());
@@ -41,17 +17,6 @@ const db = new Pool({
   user: process.env.DB_USER,
   password: process.env.DB_PASSWORD,
 });
-
-// =========================
-// WEBSOCKET BROADCAST
-// =========================
-//function broadcast(data) {
-//  wss.clients.forEach((client) => {
-//    if (client.readyState === WebSocket.OPEN) {
-//      client.send(JSON.stringify(data));
-//    }
-//  });
-//}
 
 app.post("/api/coin-inventory/reset", async (req, res) => {
     const client = await db.connect();
@@ -78,11 +43,6 @@ app.post("/api/coin-inventory/reset", async (req, res) => {
 
         await client.query("COMMIT");
 
-        //broadcast({
-        //    type: "coinInventory",
-        //    payload: result.rows[0]
-        //});
-
         res.json({
             success: true,
             data: result.rows[0]
@@ -104,9 +64,6 @@ app.post("/api/coin-inventory/reset", async (req, res) => {
     }
 });
 
-// =========================
-// QUERIES
-// =========================
 async function getProductInventory() {
   const result = await db.query(`
     SELECT 
@@ -126,7 +83,7 @@ async function getProductInventory() {
   return result.rows;
 }
 
-async function getTransactions(page = 1, limit = 13) {
+async function getTransactions(page = 1, limit = 10) {
   const offset = (page - 1) * limit;
 
   const result = await db.query(
@@ -169,7 +126,7 @@ async function getCoinInventory() {
   return result.rows[0];
 }
 
-async function getMachineLogs(limit = 13) {
+async function getMachineLogs(limit = 10) {
   const result = await db.query(`
     SELECT 
       log_id,
@@ -237,29 +194,6 @@ const lastCoin =
   };
 }
 
-// =========================
-// WEBSOCKET CONNECTION
-// =========================
-//wss.on("connection", async (ws) => {
-//  console.log("Client connected");
-
-//  try {
-//    ws.send(JSON.stringify({ type: "summary", payload: await getSummary() }));
-//    ws.send(JSON.stringify({ type: "productInventory", payload: await getProductInventory() }));
-//    ws.send(JSON.stringify({ type: "coinInventory", payload: await getCoinInventory() }));
-//    ws.send(JSON.stringify({ type: "transactions", payload: await getTransactions() }));
-
-//    ws.send(JSON.stringify({ type: "machineLogs", payload: await getMachineLogs() }));
-//  } catch (err) {
-//    console.error("WS init error:", err);
-//  }
-
-//  ws.on("close", () => console.log("Client disconnected"));
-//});
-
-// =========================
-// ROUTES
-// =========================
 app.use(express.static(__dirname));
 
 app.get("/", (req, res) => {
@@ -301,21 +235,6 @@ app.delete("/api/products/:id", async (req, res) => {
             `Product ID ${productId} was removed (soft delete)`
         ]);
 
-        //broadcast({
-        //    type: "productInventory",
-        //    payload: await getProductInventory()
-        //});
-
-        //broadcast({
-        //    type: "machineLogs",
-        //    payload: await getMachineLogs()
-        //});
-
-        //broadcast({
-        //    type: "summary",
-        //    payload: await getSummary()
-        //});
-
         res.json({ success: true });
 
     } catch (err) {
@@ -335,11 +254,6 @@ app.delete("/api/transactions/clear", async (req, res) => {
             TRUNCATE TABLE transactions
             RESTART IDENTITY
         `);
-
-        //broadcast({
-        //    type: "transactions",
-        //    payload: await getTransactions()
-        //});
 
         res.json({
             success: true
@@ -369,11 +283,6 @@ app.delete("/api/machine-logs/clear", async (req, res) => {
             RESTART IDENTITY
         `);
 
-        //broadcast({
-        //    type: "machineLogs",
-        //    payload: await getMachineLogs()
-        //});
-
         res.json({
             success: true
         });
@@ -390,51 +299,6 @@ app.delete("/api/machine-logs/clear", async (req, res) => {
         client.release();
     }
 });
-
-//app.post("/api/products/:id/reactivate", async (req, res) => {
-//    const client = await db.connect();
-
-//    try {
-//        const productId = req.params.id;
-
-//        await client.query(`
-//            UPDATE products
-//            SET is_active = TRUE
-//            WHERE product_id = $1
-//        `, [productId]);
-
-//        await client.query(`
-//            INSERT INTO machine_logs (log_type, message)
-//            VALUES ($1, $2)
-//        `, [
-//            "Reactivate",
-//            `Product ID ${productId} was reactivated`
-//        ]);
-
-        //broadcast({
-        //    type: "productInventory",
-        //    payload: await getProductInventory()
-        //});
-
-        //broadcast({
-        //    type: "machineLogs",
-        //    payload: await getMachineLogs()
-        //});
-
-        //broadcast({
-        //    type: "summary",
-        //    payload: await getSummary()
-        //});
-
-//        res.json({ success: true });
-
-//    } catch (err) {
-//        console.error(err);
-//        res.status(500).json({ success: false });
-//    } finally {
-//        client.release();
-//    }
-//});
 
 app.post("/api/products/:id/reactivate", async (req, res) => {
     const client = await db.connect();
@@ -462,21 +326,6 @@ app.post("/api/products/:id/reactivate", async (req, res) => {
             `Product ID ${productId} was reactivated`
         ]);
 
-        //broadcast({
-        //    type: "productInventory",
-        //    payload: await getProductInventory()
-        //});
-
-        //broadcast({
-        //    type: "machineLogs",
-        //    payload: await getMachineLogs()
-        //});
-
-        //broadcast({
-        //    type: "summary",
-        //    payload: await getSummary()
-        //});
-
         res.json({ success: true });
 
     } catch (err) {
@@ -493,14 +342,11 @@ app.get("/api/coin-inventory", async (req, res) => {
 
 app.get("/api/transactions", async (req, res) => {
   const page = Number(req.query.page) || 1;
-  const limit = Number(req.query.limit) || 13;
+  const limit = Number(req.query.limit) || 10;
 
   res.json(await getTransactions(page, limit));
 });
 
-// =========================
-// TRANSACTION (REALTIME EVENT ONLY)
-// =========================
 app.post("/api/transaction", async (req, res) => {
   const client = await db.connect();
 
@@ -548,27 +394,6 @@ app.post("/api/transaction", async (req, res) => {
 
     await client.query("COMMIT");
 
-    // ⚡ ONLY LIGHTWEIGHT UPDATES
-    //broadcast({
-    //  type: "summary",
-    //  payload: await getSummary()
-    //});
-
-    //broadcast({
-    //  type: "productInventory",
-    //  payload: await getProductInventory()
-    //});
-
-    //broadcast({
-    //  type: "machineLogs",
-    //  payload: await getMachineLogs()
-    //});
-
-    //broadcast({
-    //  type: "transactions",
-    //  payload: await getTransactions()
-    //});
-
     res.json({
       success: true,
       data: transactionResult.rows[0],
@@ -582,9 +407,6 @@ app.post("/api/transaction", async (req, res) => {
   }
 });
 
-// =========================
-// COIN INSERT (FAST EVENT)
-// =========================
 app.post("/api/coin-insert", async (req, res) => {
   try {
     const { amount } = req.body;
@@ -608,17 +430,6 @@ app.post("/api/coin-insert", async (req, res) => {
       `₱${amount} inserted`
     ]);
 
-    // ⚡ FAST BROADCAST ONLY
-    //broadcast({
-    //  type: "coinInventory",
-    //  payload: await getCoinInventory()
-    //});
-
-    //broadcast({
-    //  type: "machineLogs",
-    //  payload: await getMachineLogs()
-    //});
-
     res.json({ success: true });
 
   } catch (err) {
@@ -626,9 +437,6 @@ app.post("/api/coin-insert", async (req, res) => {
   }
 });
 
-// =========================
-// RESTOCK
-// =========================
 app.post("/api/product-inventory/:productId/restock", async (req, res) => {
   try {
     const { productId } = req.params;
@@ -654,21 +462,6 @@ app.post("/api/product-inventory/:productId/restock", async (req, res) => {
       `Product ID ${productId} restocked to max capacity`
     ]);
 
-    //broadcast({
-    //  type: "productInventory",
-    //  payload: await getProductInventory()
-    //});
-
-    //broadcast({
-    //  type: "summary",
-    //  payload: await getSummary()
-    //});
-
-    //broadcast({
-    //  type: "newLog",
-    //  payload: logResult.rows[0]
-    //});
-
     res.json({ success: true, data: result.rows[0] });
 
   } catch (err) {
@@ -678,7 +471,7 @@ app.post("/api/product-inventory/:productId/restock", async (req, res) => {
 });
 
 app.get("/api/machine-logs", async (req, res) => {
-  const limit = Number(req.query.limit) || 13;
+  const limit = Number(req.query.limit) || 10;
 
   res.json(await getMachineLogs(limit));
 });
@@ -695,7 +488,6 @@ app.post("/api/products/bulk-update", async (req, res) => {
         for (const item of updates) {
             const productId = item.product_id;
 
-            // BLOCK EDITING OF DEACTIVATED PRODUCTS
             const activeCheck = await client.query(
                 `SELECT is_active
                  FROM products
@@ -713,7 +505,6 @@ app.post("/api/products/bulk-update", async (req, res) => {
             const price = Number(item.price) || 0;
             const name = item.product_name ?? null;
 
-            // Update inventory
             await client.query(
                 `UPDATE inventory
                  SET stock_count = $1,
@@ -723,7 +514,6 @@ app.post("/api/products/bulk-update", async (req, res) => {
                 [stock, max, productId]
             );
 
-            // Update product info
             await client.query(
                 `UPDATE products
                  SET product_name = COALESCE($1, product_name),
@@ -734,16 +524,6 @@ app.post("/api/products/bulk-update", async (req, res) => {
         }
 
         await client.query("COMMIT");
-
-        ///broadcast({
-        //    type: "productInventory",
-        //    payload: await getProductInventory()
-        //});
-
-        //broadcast({
-        //    type: "summary",
-        //    payload: await getSummary()
-        //});
 
         res.json({ success: true });
 
@@ -806,16 +586,6 @@ app.post("/api/products", async (req, res) => {
 
         await client.query("COMMIT");
 
-        //broadcast({
-        //    type: "productInventory",
-        //    payload: await getProductInventory()
-        //});
-
-        //broadcast({
-        //    type: "summary",
-        //    payload: await getSummary()
-        //});
-
         res.json({ success: true });
 
     } catch (err) {
@@ -835,10 +605,6 @@ app.post("/api/products", async (req, res) => {
 
 const PORT = process.env.PORT || 3000;
 
-//server.listen(PORT, "0.0.0.0", () => {
-//  console.log(`Server running on port ${PORT}`);
-//});
-
 app.listen(PORT, "0.0.0.0", () => {
   console.log(`Server running on port ${PORT}`);
-});//NEW
+});
