@@ -126,7 +126,7 @@ function formatTime(value) {
 
     const date = new Date(value);
 
-    date.setHours(date.getHours() + 8);
+    date.setHours(date.getHours());
 
     return date.toLocaleString("en-PH", {
         year: "numeric",
